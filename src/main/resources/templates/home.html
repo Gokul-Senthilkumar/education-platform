@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Internal Education Platform</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f6f9;
+            margin:0;
+        }
+
+        .header{
+            background:#1f4e79;
+            color:white;
+            padding:20px;
+            text-align:center;
+        }
+
+        .container{
+            width:80%;
+            margin:30px auto;
+        }
+
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:8px;
+            box-shadow:0 2px 5px lightgray;
+        }
+
+        ul{
+            line-height:2;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Internal Education Platform</h1>
+    <p>Welcome to Employee Learning Portal</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Welcome, Gokul</h2>
+
+        <p>This portal helps employees learn new technologies and track certifications.</p>
+
+        <h3>Available Modules</h3>
+
+        <ul>
+            <li>Learning Dashboard</li>
+            <li>Courses</li>
+            <li>Certifications</li>
+            <li>My Profile</li>
+        </ul>
+
+        <h3>AWS Secrets Manager Integration</h3>
+
+<p><strong>SMTP Username:</strong> <span th:text="${smtpUsername}"></span></p>
+
+<p><strong>JWT Secret:</strong> <span th:text="${jwtSecret}"></span></p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
