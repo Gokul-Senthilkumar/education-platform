@@ -28,8 +28,8 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Build Spring Boot Application
-        run: mvn clean package -DskipTests
+      - name: Build and Test Spring Boot Application
+        run: mvn clean package
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
