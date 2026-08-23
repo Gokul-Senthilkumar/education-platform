@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: education-platform-service
+spec:
+  type: ClusterIP
+  selector:
+    app: education-platform
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

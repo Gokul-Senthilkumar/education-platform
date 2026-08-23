@@ -1,4 +1,4 @@
-name: Deploy to Amazon ECS
+name: Deploy to Amazon EKS
 
 on:
   push:
@@ -9,16 +9,26 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: eks-cicd
+  ECR_REPOSITORY: education-platform
+  K8S_DEPLOYMENT: education-platform
+  K8S_CONTAINER: education-platform
+  K8S_NAMESPACE: default
+
 jobs:
   deploy:
+    name: Build and Deploy to EKS
     runs-on: ubuntu-latest
 
 
     steps:
+
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -31,8 +41,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: arn:aws:iam::648070841242:role/GitHubActions-ECS-Deploy-Role
-          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::035699610728:role/GitHubActions-EKS-Deploy-Role
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Verify AWS Identity
         run: aws sts get-caller-identity
@@ -43,29 +53,42 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t education-platform:${{ github.sha }} .
-
-      - name: Tag Docker Image
-        run: docker tag education-platform:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/education-platform:${{ github.sha }}
+          docker build \
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
+            .
 
       - name: Push Docker Image
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/education-platform:${{ github.sha }}
+        run: |
+          docker push \
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-      - name: Download Task Definition
-        run: aws ecs describe-task-definition --task-definition education-platform-task --query taskDefinition > task-definition.json
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.EKS_CLUSTER_NAME }}
 
-      - name: Render Amazon ECS Task Definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: Main
-          image: ${{ steps.login-ecr.outputs.registry }}/education-platform:${{ github.sha }}
+      - name: Verify EKS Access
+        run: |
+          kubectl get nodes
+          kubectl get deployment \
+            ${{ env.K8S_DEPLOYMENT }} \
+            -n ${{ env.K8S_NAMESPACE }}
 
-      - name: Deploy Amazon ECS Task Definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: education-platform-service
-          cluster: education-platform-cluster
-          wait-for-service-stability: true
+      - name: Deploy New Image
+        run: |
+          kubectl set image deployment/${{ env.K8S_DEPLOYMENT }} \
+            ${{ env.K8S_CONTAINER }}=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
+            -n ${{ env.K8S_NAMESPACE }}
+
+      - name: Wait for Rollout
+        run: |
+          kubectl rollout status \
+            deployment/${{ env.K8S_DEPLOYMENT }} \
+            -n ${{ env.K8S_NAMESPACE }} \
+            --timeout=5m
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n ${{ env.K8S_NAMESPACE }} -o wide
+          kubectl get service -n ${{ env.K8S_NAMESPACE }}
