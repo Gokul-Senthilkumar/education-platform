@@ -21,3 +21,10 @@ Thumbs.db
 .project
 .classpath
 .settings/
+
+
+alb-controller-policy.json
+irsa-trust-policy.json
+github-actions-trust-policy.json
+github-actions-ecr-policy.json
+Complete_Console.txt
