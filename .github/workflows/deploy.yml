@@ -69,7 +69,6 @@ jobs:
 
       - name: Verify EKS Access
         run: |
-          kubectl get nodes
           kubectl get deployment \
             ${{ env.K8S_DEPLOYMENT }} \
             -n ${{ env.K8S_NAMESPACE }}
