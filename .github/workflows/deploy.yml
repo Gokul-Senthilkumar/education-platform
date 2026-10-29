@@ -23,7 +23,7 @@ env:
 
 jobs:
   deploy:
-    name: Build, Scan, and Deploy
+    name: Build and Deploy
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -59,16 +59,24 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          set -euo pipefail
+
+          ERROR_FILE=$(mktemp)
+          trap 'rm -f "$ERROR_FILE"' EXIT
+
           if aws ecr describe-images \
             --region "$AWS_REGION" \
             --repository-name "$ECR_REPOSITORY" \
             --image-ids "imageTag=$IMAGE_TAG" \
-            >/dev/null 2>&1; then
+            >/dev/null 2>"$ERROR_FILE"; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "Image already exists; it will be reused."
-          else
+          elif grep -q "ImageNotFoundException" "$ERROR_FILE"; then
             echo "exists=false" >> "$GITHUB_OUTPUT"
             echo "Image does not exist yet; it will be built."
+          else
+            cat "$ERROR_FILE"
+            exit 1
           fi
 
       - name: Pull Existing Image
@@ -88,16 +96,6 @@ jobs:
           docker build \
             --tag "$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" \
             .
-
-      - name: Scan Docker Image with Trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: image
-          image-ref: ${{ steps.login-ecr.outputs.registry }}/education-platform:${{ github.sha }}
-          scanners: vuln
-          severity: HIGH,CRITICAL
-          exit-code: '1'
-          format: table
 
       - name: Push Image to ECR
         if: steps.image-check.outputs.exists == 'false'

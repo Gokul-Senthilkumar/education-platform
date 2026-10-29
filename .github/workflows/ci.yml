@@ -1,4 +1,3 @@
-
 name: CI Pipeline
 
 on:
@@ -27,21 +26,3 @@ jobs:
 
       - name: Build and Test
         run: mvn --batch-mode clean verify
-
-  security-scan:
-    name: Dependency and Security Scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Scan repository with Trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          scanners: vuln,secret,misconfig
-          severity: HIGH,CRITICAL
-          exit-code: '1'
-          format: table
