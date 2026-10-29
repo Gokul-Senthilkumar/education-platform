@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration | Learning Portal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Join Our Learning Portal</h1>
+        <p style="text-align: center;">
+            Create your employee account
+        </p>
+
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form th:action="@{/register}" method="post">
+            <div>
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName"
+                       maxlength="100" autocomplete="name" required>
+            </div>
+
+            <br>
+
+            <div>
+                <label for="email">Work Email</label>
+                <input type="email" id="email" name="email"
+                       maxlength="150" autocomplete="email" required>
+            </div>
+
+            <br>
+
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       autocomplete="new-password" required>
+            </div>
+
+            <br>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p style="text-align: center;">
+            Already registered? <a th:href="@{/login}">Log in</a>
+        </p>
+
+        <p style="text-align: center;">
+            <a th:href="@{/}">Back to Home</a>
+        </p>
+    </div>
+
+</body>
+</html>

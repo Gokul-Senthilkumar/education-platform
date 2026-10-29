@@ -1,3 +1,4 @@
+
 name: CI Pipeline
 
 on:
@@ -5,12 +6,16 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
-  build:
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Source code
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Java 21
@@ -20,34 +25,23 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Build and Test the application
-        run: mvn clean package
+      - name: Build and Test
+        run: mvn --batch-mode clean verify
 
-  test:
+  security-scan:
+    name: Dependency and Security Scan
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Scan repository with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Run Tests
-        run: mvn test
-
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Security Check
-        run: echo "Running security checks"
-
-      
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: HIGH,CRITICAL
+          exit-code: '1'
+          format: table

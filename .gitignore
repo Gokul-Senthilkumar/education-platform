@@ -28,3 +28,30 @@ irsa-trust-policy.json
 github-actions-trust-policy.json
 github-actions-ecr-policy.json
 Complete_Console.txt
+# Database backups
+*.sql
+
+# Environment-specific files
+.env.*
+
+# Private keys and certificates
+*.pem
+*.key
+
+# Local AWS/IAM setup artifacts
+alb-controller-irsa-trust-policy.json
+alb-controller-policy.json
+irsa-trust-policy.json
+github-actions-eks-policy.json
+iam_policy.json
+alb-controller-serviceaccount.yaml
+
+# Kubernetes Secret manifests
+k8s/secret.yaml
+k8s/secrets.yaml
+
+# Local lab output and state
+.aws/
+*.tfstate
+*.tfstate.*
+crash.log
