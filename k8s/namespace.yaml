@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: education-platform
+  labels:
+    app.kubernetes.io/name: education-platform
+    app.kubernetes.io/part-of: education-platform

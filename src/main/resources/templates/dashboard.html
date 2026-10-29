@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Employee Dashboard | Learning Portal</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <header class="topbar">
+        <a th:href="@{/dashboard}" class="brand">
+            Employee Learning Portal
+        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-button">Log Out</button>
+        </form>
+    </header>
+
+    <main class="dashboard">
+
+        <section class="welcome-section">
+            <p class="eyebrow">EMPLOYEE LEARNING PORTAL</p>
+
+            <h1>
+                Welcome,
+                <span th:text="${employee.fullName}">Employee</span>!
+            </h1>
+
+            <p class="welcome-description">
+                Continue learning, develop new skills, and grow your career.
+            </p>
+
+            <p class="employee-email">
+                Work Email:
+                <strong th:text="${employee.email}">
+                    employee@example.com
+                </strong>
+            </p>
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <h2>Available Courses</h2>
+                    <p>Explore courses available for your learning journey.</p>
+                </div>
+
+                <span class="course-count">
+                    <span th:text="${#lists.size(courses)}">0</span>
+                    Courses
+                </span>
+            </div>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(courses)}">
+                <h3>No courses available</h3>
+                <p>Please check back later for new learning opportunities.</p>
+            </div>
+
+            <div class="course-grid" th:unless="${#lists.isEmpty(courses)}">
+
+                <article class="course-card"
+                         th:each="course : ${courses}">
+
+                    <div class="course-card-top">
+                        <span class="course-category"
+                              th:text="${course.category}">
+                            Cloud
+                        </span>
+
+                        <span class="course-icon" aria-hidden="true">
+                            &#128218;
+                        </span>
+                    </div>
+
+                    <h3 th:text="${course.title}">
+                        Course Title
+                    </h3>
+
+                    <p class="course-description"
+                       th:text="${course.description}">
+                        Course description
+                    </p>
+
+                    <div class="course-meta">
+                        <span aria-hidden="true">&#9201;</span>
+                        <span th:text="${course.duration}">4 hours</span>
+                    </div>
+
+                </article>
+
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <h2>My Learning</h2>
+                    <p>Your personal learning workspace.</p>
+                </div>
+            </div>
+
+            <div class="learning-grid">
+
+                <article class="learning-card">
+                    <div class="learning-icon">&#127891;</div>
+                    <h3>My Certifications</h3>
+                    <p>Keep track of your professional certifications.</p>
+                </article>
+
+                <article class="learning-card">
+                    <div class="learning-icon">&#128200;</div>
+                    <h3>Learning Progress</h3>
+                    <p>Review your learning progress and achievements.</p>
+                </article>
+
+                <article class="learning-card">
+                    <div class="learning-icon">&#128100;</div>
+                    <h3>My Profile</h3>
+                    <p>View your employee account information.</p>
+                </article>
+
+            </div>
+        </section>
+
+        <footer class="footer">
+            Employee Learning Portal &copy; 2026
+        </footer>
+
+    </main>
+
+</body>
+</html>

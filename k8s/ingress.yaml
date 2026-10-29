@@ -2,6 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: education-platform-ingress
+  namespace: education-platform
+  labels:
+    app.kubernetes.io/name: education-platform
+    app.kubernetes.io/part-of: education-platform
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
@@ -15,6 +19,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: education-platform-service
+                name: education-platform
                 port:
                   number: 80
