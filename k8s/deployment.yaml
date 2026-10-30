@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: education-platform
-          image: 100379913615.dkr.ecr.us-east-1.amazonaws.com/education-platform:REPLACE_WITH_GIT_SHA
+          image: 498524284921.dkr.ecr.us-east-1.amazonaws.com/education-platform:REPLACE_WITH_GIT_SHA
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -41,7 +41,7 @@ spec:
               protocol: TCP
           env:
             - name: DB_URL
-              value: "jdbc:mysql://education-platform-db.caxr1tqgqkiz.us-east-1.rds.amazonaws.com:3306/education_platform"
+              value: "jdbc:mysql://education-platform-db.cdaekobuju99.us-east-1.rds.amazonaws.com:3306/education_platform"
             - name: DB_USERNAME
               value: "eduapp"
             - name: DB_PASSWORD
