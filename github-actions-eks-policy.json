@@ -7,7 +7,7 @@
       "Action": [
         "eks:DescribeCluster"
       ],
-      "Resource": "arn:aws:eks:us-east-1:035699610728:cluster/eks-cicd"
+      "Resource": "arn:aws:eks:us-east-1:498524284921:cluster/eks-cicd"
     }
   ]
 }
